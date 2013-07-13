@@ -1,16 +1,6 @@
 module ActiveAdmin::Mongoid::Document
   extend ActiveSupport::Concern
 
-  included do
-    unless respond_to? :primary_key
-      class << self
-        attr_accessor :primary_key
-      end
-    end
-
-    self.primary_key ||= [:_id]
-  end
-
   class Connection
     def initialize model
       @model = model
@@ -46,14 +36,17 @@ module ActiveAdmin::Mongoid::Document
       @connection ||= Connection.new(self)
     end
 
+    def primary_key
+      :_id
+    end
+
     def find_by_id id
-      find_by(:_id => id)
+      find(id)
     end
 
     def quoted_table_name
       collection_name.to_s.inspect
     end
-
   end
 end
 
